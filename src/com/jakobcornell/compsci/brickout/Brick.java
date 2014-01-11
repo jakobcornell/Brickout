@@ -16,8 +16,7 @@ public class Brick {
     return null;
   }
 
-  public void paint(Graphics gr) {
-    Graphics2D g = (Graphics2D) gr;
+  public void paint(Graphics2D g) {
     g.draw(new Rectangle2D.Double(x, y, 4, 2));
   }
 }

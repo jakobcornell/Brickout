@@ -8,8 +8,7 @@ public class Bullet {
   public double x, y;
   public double xv;
 
-  public void paint(Graphics g) {
-    Graphics2D gr = (Graphics2D) g;
-    gr.draw(new Line2D.Double(x, y, 0, 1));
+  public void paint(Graphics2D g) {
+    g.draw(new Line2D.Double(x, y, 0, 1));
   }
 }

@@ -1,13 +1,14 @@
 package com.jakobcornell.compsci.brickout;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 public abstract class Powerup {
-   public double x, y;
-   
-   public abstract void activate(Field field);
-   
-   public void paint(Graphics g) {
-     g.drawRect((int) (10*x-20), (int) (600-10*y-10), 40, 20);
-   }
+  public double x, y;
+
+  public abstract void activate(Field field);
+
+  public void paint(Graphics2D g) {
+    g.draw(new Rectangle2D.Double(x-2, y-1, 4, 2));
+  }
 }
