@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.ArrayDeque;
@@ -43,15 +45,29 @@ public class Field {
     final Field field = new Field();
     JFrame frame = new JFrame();
     final JPanel panel = new JPanel() {
-      public void paint(Graphics gr) {
+      public void paintComponent(Graphics gr) {
         Graphics2D g = ((Graphics2D) gr);
         g.scale(10, -10);
         g.translate(0, -60);
         field.paint(g);
-        g.dispose();
       }
     };
     panel.setPreferredSize(new Dimension(800, 600));
+    panel.addKeyListener(new KeyListener(){
+      public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT)
+          field.onPaddleMoveEvent(PaddleMoveEvent.left);
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+          field.onPaddleMoveEvent(PaddleMoveEvent.right);
+      }
+      
+      public void keyReleased(KeyEvent arg0) {
+        
+      }
+      
+      public void keyTyped(KeyEvent arg0) {}
+    });
+    panel.setFocusable(true);
     frame.getContentPane().add(panel);
     frame.pack();
     frame.setResizable(false);
@@ -59,7 +75,6 @@ public class Field {
     field.initialize(new ArrayDeque<Ball>(), new Paddle());
     Timer timer = new Timer();
     timer.schedule(new TimerTask() {
-      @Override
       public void run() {
         field.tick();
         panel.repaint();
@@ -95,7 +110,7 @@ public class Field {
     while (i.hasNext()) {
       Ball ball = i.next();
       if (ball.x < 0.5) {
-        ball.xv = Math.abs(ball.xv);
+        ball.xv = Math.abs(ball.xv); // absolute value ensures that opposite velocities don't cancel out in adjacent ticks
         ball.x = 1-ball.x;
       }
       else if (ball.x > 79.5) {
@@ -113,10 +128,17 @@ public class Field {
     for (Bullet bullet : bullets)
       if (bullet.y > 60)
         bullet = null;
+    if (paddle.x < paddle.size / 2)
+      paddle.x = paddle.size / 2;
+    else if (paddle.x > 80 - paddle.size / 2)
+      paddle.x = 80 - paddle.size / 2;
   }
 
   public void onPaddleMoveEvent(PaddleMoveEvent e) {
-    
+    if (e == PaddleMoveEvent.left)
+      paddle.x -= paddle.xv;
+    else if (e == PaddleMoveEvent.right)
+      paddle.x += paddle.xv;
   }
 
   public void onShootEvent() {
