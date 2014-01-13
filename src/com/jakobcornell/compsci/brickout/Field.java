@@ -170,7 +170,12 @@ public class Field {
       }
       // ball and paddle
       if (ball.y < 2.5 && ball.x > paddle.x - paddle.size / 2 - 0.5 && ball.x < paddle.x + paddle.size / 2 + 0.5) {
-        ball.yv = Math.abs(ball.yv);
+        double direction = Math.atan2(ball.yv, ball.xv);
+        double magnitude = Math.sqrt(ball.xv * ball.xv + ball.yv * ball.yv);
+        double tiltAxis = Math.PI / 2 - 0.6 * (ball.x - paddle.x) / paddle.size;
+        direction = Math.PI + tiltAxis - (direction - tiltAxis);
+        ball.xv = magnitude * Math.cos(direction);
+        ball.yv = magnitude * Math.sin(direction);
         ball.y = 2.5 + (2.5 - ball.y);
       }
       // ball and brick
