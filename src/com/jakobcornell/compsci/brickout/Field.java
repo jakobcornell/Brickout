@@ -56,9 +56,7 @@ public class Field {
           field.onBallLaunchEvent();
       }
       
-      public void keyReleased(KeyEvent arg0) {
-
-      }
+      public void keyReleased(KeyEvent arg0) {}
       
       public void keyTyped(KeyEvent arg0) {}
     });
@@ -67,12 +65,24 @@ public class Field {
     frame.pack();
     frame.setResizable(false);
     frame.setVisible(true);
-    field.initialize(new LifeBasedBallDispenser(5), new Paddle());
-    Timer timer = new Timer();
+    field.initialize(new LifeBasedBallDispenser(3), new Paddle());
+    final Timer timer = new Timer();
+    final Runnable done = new Runnable() {
+      public void run() {
+        timer.cancel();
+        if (field.isOver())
+          System.out.println("FAIL");
+        else
+          System.out.println("WINZ");
+      }
+    };
     timer.schedule(new TimerTask() {
       public void run() {
         field.tick();
         panel.repaint(0);
+        if (field.isOver() || field.isWon()) {
+          done.run();
+        }
       }
     }, 0, 30);
   }
@@ -203,7 +213,7 @@ public class Field {
   }
   
   public boolean isOver() {
-    return (activeBalls.isEmpty() && paddle.loadedBall == null && availableBalls.size() > 0);
+    return (activeBalls.isEmpty() && paddle.loadedBall == null && availableBalls.size() == 0);
   }
   
   public boolean isWon() {
