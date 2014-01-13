@@ -8,13 +8,6 @@ public class Ball {
   public double xv, yv;
   public boolean strong;
   
-  public Ball() {
-    x = 0;
-    y = 0;
-    xv = 0.5;
-    yv = 0.5;
-  }
-  
   public Ball split() {
     return new Ball();
   }

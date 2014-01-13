@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 
 public abstract class Powerup {
   public double x, y;
+  public double xv, yv;
 
   public abstract void activate(Field field);
 
