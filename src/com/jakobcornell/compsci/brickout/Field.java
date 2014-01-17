@@ -2,18 +2,9 @@ package com.jakobcornell.compsci.brickout;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class Field {
   public transient int score;
@@ -23,69 +14,6 @@ public class Field {
   private Set<Bullet> bullets;
   private Set<Powerup> powerups;
   private transient Paddle paddle;
-  
-  public Field() {
-    activeBalls = new HashSet<Ball>();
-    bricks = new HashSet<Brick>();
-    bullets = new HashSet<Bullet>();
-    powerups = new HashSet<Powerup>();
-    for (int i = 10; i < 70; i += 20)
-      for (int j = 30; j < 60; j += 10)
-        bricks.add(new Brick(i, j));
-  }
-  
-  public static void main(String[] args) {
-    final Field field = new Field();
-    JFrame frame = new JFrame();
-    final JPanel panel = new JPanel() {
-      public void paintComponent(Graphics gr) {
-        Graphics2D g = ((Graphics2D) gr);
-        g.scale(10, -10);
-        g.translate(0, -60);
-        field.paint(g);
-      }
-    };
-    panel.setPreferredSize(new Dimension(800, 600));
-    panel.addKeyListener(new KeyListener(){
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT)
-          field.onPaddleMoveEvent(PaddleMoveEvent.left);
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-          field.onPaddleMoveEvent(PaddleMoveEvent.right);
-        else if (e.getKeyCode() == KeyEvent.VK_UP)
-          field.onBallLaunchEvent();
-      }
-      
-      public void keyReleased(KeyEvent arg0) {}
-      
-      public void keyTyped(KeyEvent arg0) {}
-    });
-    panel.setFocusable(true);
-    frame.getContentPane().add(panel);
-    frame.pack();
-    frame.setResizable(false);
-    frame.setVisible(true);
-    field.initialize(new LifeBasedBallDispenser(3), new Paddle());
-    final Timer timer = new Timer();
-    final Runnable done = new Runnable() {
-      public void run() {
-        timer.cancel();
-        if (field.isOver())
-          System.out.println("FAIL");
-        else
-          System.out.println("WINZ");
-      }
-    };
-    timer.schedule(new TimerTask() {
-      public void run() {
-        field.tick();
-        panel.repaint(0);
-        if (field.isOver() || field.isWon()) {
-          done.run();
-        }
-      }
-    }, 0, 30);
-  }
   
   public void initialize(LifeBasedBallDispenser availableBalls, Paddle paddle) {
     this.availableBalls = availableBalls;
@@ -141,8 +69,10 @@ public class Field {
       }
     Iterator<Brick> i1 = bricks.iterator();
     while (i1.hasNext())
-      if (i1.next().broken)
+      if (i1.next().broken) {
         i1.remove();
+        score++;
+      }
     Iterator<Bullet> i2 = bullets.iterator();
     while (i2.hasNext())
       if (i2.next().y > 60)
@@ -218,7 +148,7 @@ public class Field {
   }
   
   public boolean isOver() {
-    return (activeBalls.isEmpty() && paddle.loadedBall == null && availableBalls.size() == 0);
+    return (activeBalls.isEmpty() && paddle.loadedBall == null && availableBalls.size() == 0) || isWon();
   }
   
   public boolean isWon() {
