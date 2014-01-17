@@ -3,22 +3,23 @@ package com.jakobcornell.compsci.brickout;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Field {
+public class Field implements Serializable {
+  private static final long serialVersionUID = 1L;
   public transient int score;
   private transient LifeBasedBallDispenser availableBalls;
-  private Set<Ball> activeBalls;
-  private Set<Brick> bricks;
-  private Set<Bullet> bullets;
-  private Set<Powerup> powerups;
+  protected Set<Ball> activeBalls;
+  protected Set<Brick> bricks;
+  protected Set<Bullet> bullets;
+  protected Set<Powerup> powerups;
   private transient Paddle paddle;
   
   public void initialize(LifeBasedBallDispenser availableBalls, Paddle paddle) {
     this.availableBalls = availableBalls;
     this.paddle = paddle;
-    paddle.loadedBall = new Ball();
   }
   
   public void paint(Graphics2D g) {
@@ -39,6 +40,8 @@ public class Field {
     updatePositions();
     prune();
     updateVelocities();
+    if (paddle.loadedBall == null && activeBalls.isEmpty())
+      paddle.loadedBall = availableBalls.remove();
   }
   
   private void updatePositions() {
@@ -65,13 +68,12 @@ public class Field {
     while (i0.hasNext())
       if (i0.next().y < 0.5) {
         i0.remove();
-        paddle.loadedBall = availableBalls.remove();
       }
     Iterator<Brick> i1 = bricks.iterator();
     while (i1.hasNext())
       if (i1.next().broken) {
         i1.remove();
-        score++;
+        score += 100;
       }
     Iterator<Bullet> i2 = bullets.iterator();
     while (i2.hasNext())
@@ -123,6 +125,22 @@ public class Field {
             if (!ball.strong) {
               ball.yv = Math.abs(ball.yv);
               ball.y = brick.y + 2 + 0.5 + (brick.y + 2 + 0.5 - ball.y);
+            }
+          }
+        }
+        if (ball.y > brick.y - 0.5 && ball.y < brick.y + 2 + 0.5) {
+          if (ball.x > brick.x - 0.5 && ball.x < brick.x) {
+            brick.hit(ball.strong);
+            if (!ball.strong) {
+              ball.xv = -Math.abs(ball.xv);
+              ball.x = brick.x - 0.5 - (ball.x + 0.5 - brick.x);
+            }
+          }
+          else if (ball.x < brick.x + 4 + 0.5 && ball.x > brick.x + 4) {
+            brick.hit(ball.strong);
+            if (!ball.strong) {
+              ball.xv = Math.abs(ball.xv);
+              ball.x = brick.x + 4 + 0.5 + (brick.x + 4 + 0.5 - ball.x);
             }
           }
         }

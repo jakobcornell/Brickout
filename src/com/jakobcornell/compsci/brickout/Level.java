@@ -8,6 +8,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Level {
+  public static void main(String[] args) throws IOException {
+    saveToFile(new ExampleLevel(), new File("level.ser"));
+  }
+  
   public static Field getFromFile(final File inFile) throws IOException, ClassNotFoundException {
     final ObjectInputStream des = new ObjectInputStream(new FileInputStream(inFile));
     final Field level = (Field) des.readObject();

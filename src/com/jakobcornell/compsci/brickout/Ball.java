@@ -2,8 +2,10 @@ package com.jakobcornell.compsci.brickout;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.io.Serializable;
 
-public class Ball {
+public class Ball implements Serializable {
+  private static final long serialVersionUID = 1L;
   public double x, y;
   public double xv, yv;
   public boolean strong;

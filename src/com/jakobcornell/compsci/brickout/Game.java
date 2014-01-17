@@ -7,14 +7,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class Game {
-  public static void main(String[] args) throws ClassNotFoundException, IOException, InterruptedException {
+  public static void main(String[] args) throws ClassNotFoundException, IOException, InterruptedException, InvocationTargetException {
     Game game = new Game();
     game.availableBalls = new LifeBasedBallDispenser(3);
     game.paddle = new Paddle();
@@ -22,8 +25,11 @@ public class Game {
       Field f = Level.getFromFile(new File("level.ser"));
       game.levelLifeCycle(f);
     }
+    JOptionPane.showMessageDialog(game.frame, String.format("Game over!\nScore: %d", game.score), "Brickout", JOptionPane.INFORMATION_MESSAGE);
+    System.exit(0);
   }
   
+  private int score;
   private JFrame frame;
   private Paddle paddle;
   private LifeBasedBallDispenser availableBalls;
@@ -34,7 +40,7 @@ public class Game {
     frame.setVisible(true);
   }
   
-  private void levelLifeCycle(final Field field) throws InterruptedException {
+  private void levelLifeCycle(final Field field) throws InterruptedException, InvocationTargetException {
     final JPanel panel = new JPanel() {
       private static final long serialVersionUID = 1L;
       public void paintComponent(Graphics gr) {
@@ -44,25 +50,30 @@ public class Game {
         field.paint(g);
       }
     };
-    panel.setPreferredSize(new Dimension(800, 600));
-    panel.addKeyListener(new KeyListener(){
-      public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT)
-          field.onPaddleMoveEvent(PaddleMoveEvent.left);
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-          field.onPaddleMoveEvent(PaddleMoveEvent.right);
-        else if (e.getKeyCode() == KeyEvent.VK_SPACE)
-          field.onBallLaunchEvent();
+    SwingUtilities.invokeAndWait(new Runnable() {
+      public void run() {
+        panel.setPreferredSize(new Dimension(800, 600));
+        panel.addKeyListener(new KeyListener(){
+          public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT)
+              field.onPaddleMoveEvent(PaddleMoveEvent.left);
+            else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+              field.onPaddleMoveEvent(PaddleMoveEvent.right);
+            else if (e.getKeyCode() == KeyEvent.VK_SPACE)
+              field.onBallLaunchEvent();
+          }
+          
+          public void keyReleased(KeyEvent arg0) {} // not really anything
+          
+          public void keyTyped(KeyEvent arg0) {} // not really anything
+        });
+        panel.setFocusable(true);
+        frame.getContentPane().add(panel);
+        frame.pack();
+        panel.requestFocusInWindow();
       }
-      
-      public void keyReleased(KeyEvent arg0) {}
-      
-      public void keyTyped(KeyEvent arg0) {}
     });
-    panel.setFocusable(true);
-    frame.getContentPane().add(panel);
-    frame.pack();
-    field.initialize(availableBalls, paddle);;
+    field.initialize(availableBalls, paddle);
     final Timer timer = new Timer();
     timer.schedule(new TimerTask() {
       public void run() {
@@ -73,11 +84,11 @@ public class Game {
     while(!field.isOver())
       Thread.sleep(100);
     timer.cancel();
-    if (field.isOver())
-      System.out.println("FAIL");
-    else
-      System.out.println("WINZ");
-    System.out.println("Score: "+field.score);
-    frame.remove(panel);
+    score += field.score;
+    SwingUtilities.invokeAndWait(new Runnable() {
+      public void run() {
+        frame.remove(panel);
+      }
+    });
   }
 }

@@ -24,7 +24,7 @@ public class Paddle {
       hashtagLoadedBall.x = x;
       hashtagLoadedBall.y = 2.5;
       hashtagLoadedBall.xv = 0;
-      hashtagLoadedBall.yv = 0.25;
+      hashtagLoadedBall.yv = 0.4;
       return hashtagLoadedBall;
     }
     return null;
