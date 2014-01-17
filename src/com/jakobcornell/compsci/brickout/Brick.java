@@ -2,7 +2,6 @@ package com.jakobcornell.compsci.brickout;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -38,9 +37,8 @@ public class Brick implements Serializable {
   }
   
   public void paint(final Graphics2D g) {
-    final AffineTransform t = new AffineTransform();
-    t.translate(x, y);
+    final AffineTransform t = AffineTransform.getTranslateInstance(x, y);
+    t.scale(4.0/image.getWidth(), 2.0/image.getHeight());
     g.drawImage(image, t, null);
-    g.draw(new Rectangle2D.Double(x, y, 4, 2));
   }
 }
