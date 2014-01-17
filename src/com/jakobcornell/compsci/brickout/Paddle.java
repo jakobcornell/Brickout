@@ -6,9 +6,9 @@ import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 
 public class Paddle {
-  public double x;
-  public double xv;
-  public int size;
+  public double x; // position
+  public double xv; // velocity
+  public int size; // width in game units (relative to the size of a ball)
   protected boolean guns;
   public Ball loadedBall;
 
@@ -16,27 +16,36 @@ public class Paddle {
     x = 0;
     size = 8;
   }
-
+  
+  /*
+   * Returns a ball to be launched if there is one loaded, or returns null if there isn't
+   */
   public Ball launch() {
     if (loadedBall != null) {
-      Ball hashtagLoadedBall = loadedBall;
+      Ball ballToLaunch = loadedBall;
       loadedBall = null;
-      hashtagLoadedBall.x = x;
-      hashtagLoadedBall.y = 2.5;
-      hashtagLoadedBall.xv = 0;
-      hashtagLoadedBall.yv = 0.4;
-      return hashtagLoadedBall;
+      ballToLaunch.x = x;
+      ballToLaunch.y = 2.5;
+      ballToLaunch.xv = 0;
+      ballToLaunch.yv = 0.4;
+      return ballToLaunch;
     }
     return null;
   }
-
+  
+  /*
+   * (Not yet implemented)
+   */
   public Collection<Bullet> shoot() {
     return null;
   }
-
+  
+  /*
+   * Paints this paddle onto the provided Graphics2D object
+   */
   public void paint(Graphics2D g) {
     g.draw(new Rectangle2D.Double(x-size/2, 1, size, 1));
-    if (loadedBall != null)
+    if (loadedBall != null) // if there is a loaded ball, draw it above this paddle
       g.draw(new Ellipse2D.Double(x - 0.5, 2, 1, 1));
   }
 }

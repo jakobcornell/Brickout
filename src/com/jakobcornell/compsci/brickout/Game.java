@@ -25,6 +25,7 @@ public class Game {
       Field f = Level.getFromFile(new File("level.ser"));
       game.levelLifeCycle(f);
     }
+    // when the game is over, shows a dialog providing score information
     JOptionPane.showMessageDialog(game.frame, String.format("Game over!\nScore: %d", game.score), "Brickout", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }
@@ -70,21 +71,21 @@ public class Game {
         panel.setFocusable(true);
         frame.getContentPane().add(panel);
         frame.pack();
-        panel.requestFocusInWindow();
+        panel.requestFocusInWindow(); // focuses the game panel so that keyboard input goes there by default
       }
     });
     field.initialize(availableBalls, paddle);
     final Timer timer = new Timer();
     timer.schedule(new TimerTask() {
-      public void run() {
+      public void run() { // actual method that is run each iteration
         field.tick();
         panel.repaint(0);
       }
     }, 0, 30);
     while(!field.isOver())
       Thread.sleep(100);
-    timer.cancel();
-    score += field.score;
+    timer.cancel(); // ends the timer
+    score += field.score; // adds the user's score during the current level to the global player score
     SwingUtilities.invokeAndWait(new Runnable() {
       public void run() {
         frame.remove(panel);

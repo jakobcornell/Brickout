@@ -6,9 +6,12 @@ import java.io.Serializable;
 
 public class Bullet implements Serializable {
   private static final long serialVersionUID = 1L;
-  public double x, y;
-  public double xv, yv;
-
+  public double x, y; // locations
+  public double xv, yv; // velocities
+  
+  /*
+   * Paints itself onto the passed-in Graphics2D object
+   */
   public void paint(Graphics2D g) {
     g.draw(new Line2D.Double(x, y, 0, 1));
   }

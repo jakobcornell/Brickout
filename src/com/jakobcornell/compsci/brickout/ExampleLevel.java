@@ -2,7 +2,12 @@ package com.jakobcornell.compsci.brickout;
 
 import java.util.HashSet;
 
+/*
+ * An example level to be used to demonstrate the functionality of the game
+ */
 public class ExampleLevel extends Field {
+  private static final long serialVersionUID = 1L;
+
   public ExampleLevel() {
     activeBalls = new HashSet<Ball>();
     bricks = new HashSet<Brick>();

@@ -12,6 +12,10 @@ public class Level {
     saveToFile(new ExampleLevel(), new File("level.ser"));
   }
   
+  /*
+   * Deserializes a file to get level data
+   * Written by Anders
+   */
   public static Field getFromFile(final File inFile) throws IOException, ClassNotFoundException {
     final ObjectInputStream des = new ObjectInputStream(new FileInputStream(inFile));
     final Field level = (Field) des.readObject();
@@ -19,6 +23,10 @@ public class Level {
     return level;
   }
   
+  /*
+   * Serializes a file to save level data
+   * Written by Anders
+   */
   public static void saveToFile(final Field level, final File outFile) throws IOException {
     final ObjectOutputStream ser = new ObjectOutputStream(new FileOutputStream(outFile));
     ser.writeObject(level);
