@@ -6,10 +6,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
-public class Brick {
+public class Brick implements Serializable {
+  private static final long serialVersionUID = 1L;
   public double x, y;
   public boolean broken;
   protected static BufferedImage image;
