@@ -1,5 +1,6 @@
 package com.jakobcornell.compsci.brickout;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 /*
@@ -7,14 +8,15 @@ import java.util.HashSet;
  */
 public class ExampleLevel extends Field {
   private static final long serialVersionUID = 1L;
-
+  
   public ExampleLevel() {
-    activeBalls = new HashSet<Ball>();
-    bricks = new HashSet<Brick>();
-    bullets = new HashSet<Bullet>();
-    powerups = new HashSet<Powerup>();
-    for (int i = 10; i < 70; i += 10)
-      for (int j = 30; j < 60; j += 5)
-        bricks.add(new Brick(i, j));
+    activeBalls = Collections.synchronizedSet(new HashSet<Ball>());
+    bricks = Collections.synchronizedSet(new HashSet<Brick>());
+    bullets = Collections.synchronizedSet(new HashSet<Bullet>());
+    powerups = Collections.synchronizedSet(new HashSet<Powerup>());
+    for (int i = 4; i <= 72; i += 4)
+      for (int j = 22; j <= 54; j += 2)
+        if(i != 8 && i != 68 && j != 26 && j != 28 && j != 50 && j != 48)
+          bricks.add(new Brick(i, j));
   }
 }

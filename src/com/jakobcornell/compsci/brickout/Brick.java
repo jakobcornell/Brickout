@@ -13,7 +13,7 @@ public class Brick implements Serializable {
   private static final long serialVersionUID = 1L;
   public double x, y; // location
   public boolean broken;
-  protected static BufferedImage image;
+  public static final BufferedImage image;
   static {
     try {
       image = ImageIO.read(new File("assets/brick.bmp"));

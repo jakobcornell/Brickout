@@ -17,12 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Game {
-  public static void main(String[] args) throws ClassNotFoundException, IOException, InterruptedException, InvocationTargetException {
-    Game game = new Game();
+  public static void main(final String[] args) throws ClassNotFoundException, IOException, InterruptedException, InvocationTargetException {
+    final Game game = new Game();
     game.availableBalls = new LifeBasedBallDispenser(3);
     game.paddle = new Paddle();
     while(game.availableBalls.size()>0) {
-      Field f = Level.getFromFile(new File("level.ser"));
+      final Field f = Level.getFromFile(new File("level.ser"));
       game.levelLifeCycle(f);
     }
     // when the game is over, shows a dialog providing score information
@@ -31,7 +31,7 @@ public class Game {
   }
   
   private int score;
-  private JFrame frame;
+  private final JFrame frame;
   private Paddle paddle;
   private LifeBasedBallDispenser availableBalls;
   
@@ -39,23 +39,27 @@ public class Game {
     frame = new JFrame();
     frame.setResizable(false);
     frame.setVisible(true);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
   
   private void levelLifeCycle(final Field field) throws InterruptedException, InvocationTargetException {
     final JPanel panel = new JPanel() {
       private static final long serialVersionUID = 1L;
-      public void paintComponent(Graphics gr) {
-        Graphics2D g = (Graphics2D) gr;
+      @Override
+      public void paintComponent(final Graphics gr) {
+        final Graphics2D g = (Graphics2D) gr;
         g.scale(10, -10);
         g.translate(0, -60);
         field.paint(g);
       }
     };
     SwingUtilities.invokeAndWait(new Runnable() {
+      @Override
       public void run() {
         panel.setPreferredSize(new Dimension(800, 600));
         panel.addKeyListener(new KeyListener(){
-          public void keyPressed(KeyEvent e) {
+          @Override
+          public void keyPressed(final KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_LEFT)
               field.onPaddleMoveEvent(PaddleMoveEvent.left);
             else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
@@ -64,9 +68,11 @@ public class Game {
               field.onBallLaunchEvent();
           }
           
-          public void keyReleased(KeyEvent arg0) {} // not really anything
+          @Override
+          public void keyReleased(final KeyEvent arg0) {} // not really anything
           
-          public void keyTyped(KeyEvent arg0) {} // not really anything
+          @Override
+          public void keyTyped(final KeyEvent arg0) {} // not really anything
         });
         panel.setFocusable(true);
         frame.getContentPane().add(panel);
@@ -77,6 +83,7 @@ public class Game {
     field.initialize(availableBalls, paddle);
     final Timer timer = new Timer();
     timer.schedule(new TimerTask() {
+      @Override
       public void run() { // actual method that is run each iteration
         field.tick();
         panel.repaint(0);
@@ -87,6 +94,7 @@ public class Game {
     timer.cancel(); // ends the timer
     score += field.score; // adds the user's score during the current level to the global player score
     SwingUtilities.invokeAndWait(new Runnable() {
+      @Override
       public void run() {
         frame.remove(panel);
       }
